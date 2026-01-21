@@ -125,4 +125,14 @@ Host script results:
 
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 181.72 seconds
+### Exploitation Process (Buffer Overflow)
+Per ottenere l'accesso iniziale, è stata identificata una vulnerabilità di tipo Buffer Overflow sul servizio Gatekeeper (Porta 31337).
+
+1. **Fuzzing**: Il servizio crasha inviando un buffer di circa 200 byte.
+2. **Offset**: Identificato l'offset esatto a **146 byte** per il controllo del registro EIP.
+3. **EIP Control**: Verificato il controllo del flusso di esecuzione sovrascrivendo l'EIP con l'indirizzo `0x080414c3` (JMP ESP).
+4. **Payload**: Generato shellcode personalizzato con `msfvenom` (LHOST=192.168.137.88) escludendo i bad chars (`\x00`).
+
+### Final Result
+Esecuzione dell'exploit finale e ricezione di una Reverse Shell come utente di sistema.
 

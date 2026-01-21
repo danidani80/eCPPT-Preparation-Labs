@@ -2,7 +2,7 @@
 # Lab Report: Gatekeeper (eCPPT Preparation)
 
 ## Enumeration Phase
-Target IP: [Metti l'IP della macchina qui]
+Target IP: 10.81.165.68
 
 ### Nmap Scan
 | Port | Service | Version |

@@ -1,24 +1,28 @@
-# 🛡️ eCPPT & PNPT Preparation Labs - Daniel Marceddu
+# Lab Report: Gatekeeper (eCPPT Preparation)
 
-Welcome to my cybersecurity repository. I am a Security Researcher currently documenting my hands-on preparation for **eCPPT v2** (eLearnSecurity Certified Professional Penetration Tester) and **PNPT** certifications.
+## 1. Enumeration Phase
+**Target IP:** `10.81.165.68`
 
-Based in Germany, I am focused on remote security roles within the European market.
+### Nmap Scan Results
+| Port | Service | Version |
+|------|---------|---------|
+| 135  | msrpc   | Microsoft Windows RPC |
+| 139  | netbios-ssn | Microsoft Windows netbios-ssn |
+| 445  | microsoft-ds | Windows 7 Professional 7601 SP1 |
+| 3389 | rdp     | Microsoft Terminal Services |
+| 31337| Elite?  | Gatekeeper Service (Vulnerable) |
 
----
-
-### 🎯 Technical Focus & Hands-on Skills:
-
-- **Network Pivoting & Lateral Movement**: Advanced tunneling techniques using **Chisel**, **Metasploit (Autoroute/Portfwd)**, and **Proxychains**.
-- **Active Directory Security**: Windows exploitation, Kerberoasting, and NTDS.dit dumping.
-- **Web Application Security**: Exploitation of RCE (e.g., Apache Struts2), SQL Injection, and XSS.
-- **System Hardening**: Privilege Escalation on Linux and Windows environments.
-
----
-
-### 📂 Repository Structure:
-- `/Network-Pivoting`: Technical notes on bypassing network segmentation.
-- `/Active-Directory`: Reports on AD exploitation labs (e.g., SpookySec).
-- `/Web-App`: Vulnerability research and exploitation notes.
+> **Note:** L'OS Discovery conferma che il target è un sistema **Windows 7 Professional 7601 Service Pack 1**.
 
 ---
-📫 **Connect with me on LinkedIn:** https://www.linkedin.com/in/daniel-marceddu-cyber/
+
+## 2. Exploitation Process (Buffer Overflow)
+Per ottenere l'accesso iniziale, è stata identificata una vulnerabilità di tipo Buffer Overflow sul servizio Gatekeeper (Porta 31337).
+
+1. **Fuzzing**: Il servizio crasha inviando un buffer di circa **200 byte**.
+2. **Offset**: Identificato l'offset esatto a **146 byte** per il controllo del registro EIP.
+3. **EIP Control**: Verificato il controllo del flusso di esecuzione sovrascrivendo l'EIP con l'indirizzo `0x080414c3` (JMP ESP).
+4. **Payload**: Generato shellcode personalizzato con `msfvenom` (LHOST=192.168.137.88) escludendo i bad chars (`\x00`).
+
+## 3. Final Result
+Esecuzione dell'exploit finale e ricezione di una **Reverse Shell** come utente di sistema.
